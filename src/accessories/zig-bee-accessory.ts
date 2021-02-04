@@ -30,6 +30,8 @@ export type ZigBeeAccessoryFactory = (
 
 const MAX_PING_ATTEMPTS = 3;
 
+const MAX_NAME_LENGTH = 64;
+
 export abstract class ZigBeeAccessory {
   public readonly ieeeAddr: string;
   protected platform: ZigbeeNTHomebridgePlatform;
@@ -91,7 +93,14 @@ export abstract class ZigBeeAccessory {
   }
 
   public get friendlyName() {
-    return this.entity.settings.friendlyName;
+    const ieeeAddr = this.zigBeeDeviceDescriptor.ieeeAddr;
+    return (
+      this.entity?.settings?.friendlyName ||
+      `${this.zigBeeDefinition.description.substr(
+        0,
+        MAX_NAME_LENGTH - 1 - ieeeAddr.length
+      )}-${ieeeAddr}`
+    );
   }
 
   public abstract getAvailableServices(): Service[];
