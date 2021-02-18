@@ -36,12 +36,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
           if (this.isOnline) {
             try {
               Object.assign(this.state, await this.client.setOnState(this.device, yes));
-              callback();
+              return callback();
             } catch (e) {
-              callback(e);
+              return callback(e);
             }
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         }
       );
@@ -59,12 +59,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               .catch(e => {
                 this.log.error(e.message);
               });
-            callback(null, this.state.state === 'ON');
+            return callback(null, this.state.state === 'ON');
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
@@ -86,12 +86,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
                 this.state,
                 await this.client.setBrightnessPercent(this.device, brightnessPercent)
               );
-              callback();
+              return callback();
             } else {
-              callback(new Error('Device is offline'));
+              return callback(new Error('Device is offline'));
             }
           } catch (e) {
-            callback(e);
+            return callback(e);
           }
         }
       );
@@ -115,12 +115,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             this.log.debug(
               `Reading Brightness for ${this.friendlyName}: ${this.state.brightness_percent}`
             );
-            callback(null, get(this.state, 'brightness_percent', 100));
+            return callback(null, get(this.state, 'brightness_percent', 100));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
     return this;
@@ -141,12 +141,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
                 this.state,
                 await this.client.setColorTemperature(this.device, colorTemperature)
               );
-              callback();
+              return callback();
             } else {
-              callback(new Error('Device is offline'));
+              return callback(new Error('Device is offline'));
             }
           } catch (e) {
-            callback(e);
+            return callback(e);
           }
         }
       );
@@ -166,12 +166,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               })
               .catch(e => this.log.error(e.message));
             this.log.debug(`Reading Color temp for ${this.friendlyName}: ${this.state.color_temp}`);
-            callback(null, get(this.state, 'color_temp', 140));
+            return callback(null, get(this.state, 'color_temp', 140));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
@@ -193,12 +193,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
           try {
             if (this.isOnline) {
               Object.assign(this.state, await this.client.setHue(this.device, hue));
-              callback();
+              return callback();
             } else {
-              callback(new Error('Device is offline'));
+              return callback(new Error('Device is offline'));
             }
           } catch (e) {
-            callback(e);
+            return callback(e);
           }
         }
       );
@@ -215,12 +215,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               })
               .catch(e => this.log.error(e.message));
             this.log.debug(`Reading HUE for ${this.friendlyName}: ${this.state.color.hue}`);
-            callback(null, get(this.state, 'color.hue', 360));
+            return callback(null, get(this.state, 'color.hue', 360));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
@@ -250,12 +250,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             const hsbType = new HSBType(h, s, v);
             const [r, g, b] = hsbType.toRGBBytes();
             Object.assign(this.state, await this.client.setColorRGB(this.device, r, g, b));
-            callback();
+            return callback();
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
     this.service
@@ -282,12 +282,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               })
               .catch(e => this.log.error(e.message));
             this.log.debug(`Reading HUE for ${this.friendlyName}: ${this.state.color.hue}`);
-            callback(null, get(this.state, 'color.hue', 360));
+            return callback(null, get(this.state, 'color.hue', 360));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
@@ -303,12 +303,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               const hsbType = new HSBType(hue, saturation, v);
               const [r, g, b] = hsbType.toRGBBytes();
               await this.client.setColorRGB(this.device, r, g, b);
-              callback();
+              return callback();
             } else {
-              callback(new Error('Device is offline'));
+              return callback(new Error('Device is offline'));
             }
           } catch (e) {
-            callback(e);
+            return callback(e);
           }
         }
       );
@@ -333,12 +333,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               })
               .catch(e => this.log.error(e.message));
             this.log.debug(`Reading Saturation for ${this.friendlyName}: ${this.state.color.s}`);
-            callback(null, get(this.state, 'color.s', 100));
+            return callback(null, get(this.state, 'color.s', 100));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
@@ -360,12 +360,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
           try {
             if (this.isOnline) {
               await this.client.setSaturation(this.device, saturation);
-              callback();
+              return callback();
             } else {
-              callback(new Error('Device is offline'));
+              return callback(new Error('Device is offline'));
             }
           } catch (e) {
-            callback(e);
+            return callback(e);
           }
         }
       );
@@ -382,12 +382,12 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               })
               .catch(e => this.log.error(e.message));
             this.log.debug(`Reading Saturation for ${this.friendlyName}: ${this.state.color.s}`);
-            callback(null, get(this.state, 'color.s', 100));
+            return callback(null, get(this.state, 'color.s', 100));
           } else {
-            callback(new Error('Device is offline'));
+            return callback(new Error('Device is offline'));
           }
         } catch (e) {
-          callback(e);
+          return callback(e);
         }
       });
 
