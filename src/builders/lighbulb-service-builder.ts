@@ -43,8 +43,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(new Error('Device is offline'));
           }
         }
-      )
-      .setValue(false);
+      ).value = false;
     this.service
       .getCharacteristic(Characteristic.On)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -94,8 +93,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(e);
           }
         }
-      )
-      .setValue(this.state.brightness_percent);
+      ).value = this.state.brightness_percent;
     this.service
       .getCharacteristic(Characteristic.Brightness)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -150,8 +148,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(e);
           }
         }
-      )
-      .setValue(this.state.color_temp);
+      ).value = this.state.color_temp;
     this.service
       .getCharacteristic(Characteristic.ColorTemperature)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -203,8 +200,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(e);
           }
         }
-      )
-      .setValue(this.state.color.hue);
+      ).value = this.state.color.hue;
     this.service
       .getCharacteristic(Characteristic.Hue)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -260,8 +256,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
         } catch (e) {
           callback(e);
         }
-      })
-      .setValue(this.state.color.hue);
+      }).value = this.state.color.hue;
     this.service
       .getCharacteristic(Characteristic.Hue)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -315,8 +310,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(e);
           }
         }
-      )
-      .setValue(this.state.color.s);
+      ).value = this.state.color.s;
     this.service
       .getCharacteristic(Characteristic.Saturation)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
@@ -373,8 +367,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             callback(e);
           }
         }
-      )
-      .setValue(this.state.color.s);
+      ).value = this.state.color.s;
     this.service
       .getCharacteristic(Characteristic.Saturation)
       .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
