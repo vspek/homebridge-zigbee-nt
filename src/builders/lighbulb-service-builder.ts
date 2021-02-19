@@ -47,7 +47,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.On)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.client
             .getOnOffState(this.device)
@@ -93,7 +93,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.Brightness)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.client
             .getBrightnessPercent(this.device)
@@ -144,7 +144,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.ColorTemperature)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.client
             .getColorTemperature(this.device)
@@ -192,7 +192,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.Hue)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.log.debug(`Reading HUE for ${this.friendlyName}: ${this.state.color.hue}`);
           callback(null, get(this.state, 'color.hue', 360));
@@ -244,7 +244,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       });
     this.service
       .getCharacteristic(Characteristic.Hue)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.client
             .getColorXY(this.device)
@@ -294,7 +294,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.Saturation)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.client
             .getColorXY(this.device)
@@ -347,7 +347,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       );
     this.service
       .getCharacteristic(Characteristic.Saturation)
-      .on(CharacteristicEventTypes.GET, async (callback: CharacteristicGetCallback) => {
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
           this.log.debug(`Reading Saturation for ${this.friendlyName}: ${this.state.color.s}`);
           callback(null, get(this.state, 'color.s', 100));
