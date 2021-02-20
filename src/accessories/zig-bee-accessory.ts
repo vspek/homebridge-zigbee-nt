@@ -1,6 +1,7 @@
 import { Logger, PlatformAccessory, Service } from 'homebridge';
 import { isNull, isUndefined } from 'lodash';
 import { ZigbeeNTHomebridgePlatform } from '../platform';
+import { HSBType } from '../utils/hsb-type';
 import { ZigBeeClient } from '../zigbee/zig-bee-client';
 import { Device } from 'zigbee-herdsman/dist/controller/model';
 import { DeviceState, ZigBeeDefinition, ZigBeeEntity } from '../zigbee/types';
@@ -312,11 +313,23 @@ export abstract class ZigBeeAccessory {
               state.color_temp
             );
           }
-          if (this.supports('color') && isValidValue(state.color?.hue)) {
-            service.updateCharacteristic(this.platform.Characteristic.Hue, state.color.hue);
+          if (this.supports('color_hs') && isValidValue(state.color?.s)) {
+            if (isValidValue(state.color?.s)) {
+              service.updateCharacteristic(this.platform.Characteristic.Saturation, state.color.s);
+            }
+            if (isValidValue(state.color?.hue)) {
+              service.updateCharacteristic(this.platform.Characteristic.Hue, state.color.hue);
+            }
           }
-          if (this.supports('color') && isValidValue(state.color?.s)) {
-            service.updateCharacteristic(this.platform.Characteristic.Saturation, state.color.s);
+          if (this.supports('color_xy') && isValidValue(state.color?.x)) {
+            const Y = (service.getCharacteristic(Characteristic.Brightness).value as number) / 100;
+            const hsbType = HSBType.fromXY(state.color.x, state.color.y, Y);
+            state.color.hue = hsbType.hue;
+            state.color.s = hsbType.saturation;
+            state.brightness_percent = hsbType.brightness;
+            service.updateCharacteristic(Characteristic.Hue, state.color.hue);
+            service.updateCharacteristic(Characteristic.Saturation, state.color.s);
+            service.updateCharacteristic(Characteristic.Brightness, state.brightness_percent);
           }
           break;
         case Service.LightSensor.UUID:

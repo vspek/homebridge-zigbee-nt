@@ -38,11 +38,8 @@ function createLightBulbService(
   if (serviceConfig.meta?.colorXY) {
     builder.withColorXY();
   }
-  if (serviceConfig.meta?.hue) {
-    builder.withHue();
-  }
-  if (serviceConfig.meta?.saturation) {
-    builder.withSaturation();
+  if (serviceConfig.meta?.colorHS) {
+    builder.withColorHS();
   }
   return builder.build();
 }
