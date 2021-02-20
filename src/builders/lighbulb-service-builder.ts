@@ -271,7 +271,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
         }
       });
 
-    return this;
+    return this.withBrightness();
   }
 
   private withSaturation(): LighbulbServiceBuilder {
