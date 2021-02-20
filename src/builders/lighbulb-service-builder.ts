@@ -194,16 +194,19 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
       .getCharacteristic(Characteristic.Hue)
       .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
         if (this.isOnline) {
-          this.log.debug(`Reading HUE for ${this.friendlyName}: ${this.state.color.hue}`);
+          this.log.debug(
+            `[ligtbulb] Reading HUE for ${this.friendlyName}: ${this.state.color.hue}`
+          );
           callback(null, get(this.state, 'color.hue', 360));
           return this.client
             .getHue(this.device)
             .then(s => {
               Object.assign(this.state, s);
-              this.service.updateCharacteristic(Characteristic.Hue, s.color.hue);
+              return this.service.updateCharacteristic(Characteristic.Hue, this.state.color.hue);
             })
-            .catch(e => this.log.error(e.message));
+            .catch(e => this.log.error(`[ligtbulb] Error reading HUE: ${e.message}`));
         } else {
+          this.log.warn(`[ligtbulb] ${this.friendlyName} is offline, skipping GET Hue`);
           return callback(new Error('Device is offline'));
         }
       });
