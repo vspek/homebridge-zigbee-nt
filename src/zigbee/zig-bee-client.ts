@@ -36,6 +36,7 @@ export class ZigBeeClient {
 
   constructor(log: Logger, customDeviceSettings: CustomDeviceSetting[] = []) {
     this.zigBee = new ZigBeeController(log);
+    this.log = log;
     this.deviceSettingsMap = new Map<string, CustomDeviceSetting>(
       customDeviceSettings.map(s => [s.ieeeAddr, s])
     );
