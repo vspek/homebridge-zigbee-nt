@@ -217,8 +217,8 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             const s = this.service.getCharacteristic(Characteristic.Saturation).value as number;
             const v = this.service.getCharacteristic(Characteristic.Brightness).value as number;
             const hsbType = new HSBType(h, s, v);
-            const [r, g, b] = hsbType.toRGBBytes();
-            Object.assign(this.state, await this.client.setColorRGB(this.device, r, g, b));
+            const [x, y] = hsbType.toXY();
+            await this.client.setColorXY(this.device, x, y);
             return callback();
           } else {
             return callback(new Error('Device is offline'));
@@ -249,8 +249,8 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               const v = this.service.getCharacteristic(Characteristic.Brightness).value as number;
               const hue = this.service.getCharacteristic(Characteristic.Hue).value as number;
               const hsbType = new HSBType(hue, saturation, v);
-              const [r, g, b] = hsbType.toRGBBytes();
-              await this.client.setColorRGB(this.device, r, g, b);
+              const [x, y] = hsbType.toXY();
+              await this.client.setColorXY(this.device, x, y);
               return callback();
             } else {
               return callback(new Error('Device is offline'));
@@ -278,13 +278,7 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
         async (brightnessPercent: number, callback: CharacteristicSetCallback) => {
           try {
             if (this.isOnline) {
-              const v = brightnessPercent;
-              const hue = this.service.getCharacteristic(Characteristic.Hue).value as number;
-              const saturation = this.service.getCharacteristic(Characteristic.Saturation)
-                .value as number;
-              const hsbType = new HSBType(hue, saturation, v);
-              const [r, g, b] = hsbType.toRGBBytes();
-              await this.client.setColorRGB(this.device, r, g, b);
+              await this.client.setBrightnessPercent(this.device, brightnessPercent);
               return callback();
             } else {
               return callback(new Error('Device is offline'));
