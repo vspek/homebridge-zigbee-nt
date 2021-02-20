@@ -271,7 +271,46 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
         }
       });
 
-    return this.withBrightness();
+    this.service
+      .getCharacteristic(Characteristic.Brightness)
+      .on(
+        CharacteristicEventTypes.SET,
+        async (brightnessPercent: number, callback: CharacteristicSetCallback) => {
+          try {
+            if (this.isOnline) {
+              const v = brightnessPercent;
+              const hue = this.service.getCharacteristic(Characteristic.Hue).value as number;
+              const saturation = this.service.getCharacteristic(Characteristic.Saturation)
+                .value as number;
+              const hsbType = new HSBType(hue, saturation, v);
+              const [r, g, b] = hsbType.toRGBBytes();
+              await this.client.setColorRGB(this.device, r, g, b);
+              return callback();
+            } else {
+              return callback(new Error('Device is offline'));
+            }
+          } catch (e) {
+            return callback(e);
+          }
+        }
+      );
+    this.service
+      .getCharacteristic(Characteristic.Brightness)
+      .on(CharacteristicEventTypes.GET, (callback: CharacteristicGetCallback) => {
+        if (this.isOnline) {
+          this.client.getBrightnessPercent(this.device).catch(e => {
+            this.log.error(e.message);
+          });
+          this.log.debug(
+            `Reading Brightness for ${this.friendlyName}: ${this.state.brightness_percent}`
+          );
+          return callback(null, get(this.state, 'brightness_percent', 100));
+        } else {
+          return callback(new Error('Device is offline'));
+        }
+      });
+
+    return this;
   }
 
   private withSaturation(): LighbulbServiceBuilder {

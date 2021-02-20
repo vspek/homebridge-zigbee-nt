@@ -320,10 +320,14 @@ export abstract class ZigBeeAccessory {
             if (isValidValue(state.color?.hue)) {
               service.updateCharacteristic(this.platform.Characteristic.Hue, state.color.hue);
             }
-          }
-          if (this.supports('color_xy') && isValidValue(state.color?.x)) {
-            const Y = (service.getCharacteristic(Characteristic.Brightness).value as number) / 100;
-            const hsbType = HSBType.fromXY(state.color.x, state.color.y, Y);
+            if (isValidValue(state.brightness_percent)) {
+              service.updateCharacteristic(
+                this.platform.Characteristic.Brightness,
+                state.brightness_percent
+              );
+            }
+          } else if (this.supports('color_xy') && isValidValue(state.color?.x)) {
+            const hsbType = HSBType.fromXY(state.color.x, state.color.y);
             state.color.hue = hsbType.hue;
             state.color.s = hsbType.saturation;
             state.brightness_percent = hsbType.brightness;
