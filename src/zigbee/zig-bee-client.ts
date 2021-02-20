@@ -150,7 +150,7 @@ export class ZigBeeClient {
         continue;
       }
 
-      this.log.debug(`Reading '${key}' from '${resolvedEntity.settings.friendlyName}'`);
+      this.log.debug(`Reading KEY '${key}' from '${resolvedEntity.settings.friendlyName}'`);
 
       try {
         Object.assign(deviceState, await converter.convertGet(target, key, { device, message }));

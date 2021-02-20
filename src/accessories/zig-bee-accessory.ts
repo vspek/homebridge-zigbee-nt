@@ -80,11 +80,11 @@ export abstract class ZigBeeAccessory {
    */
   public async initialize(): Promise<void> {
     this.mappedServices = this.getAvailableServices();
-    this.onDeviceMount()
-      .then(() => {
-        this.log.info(`Device ${this.friendlyName} mounted`);
-      })
-      .catch(e => this.log.error(`Error mounting device ${this.friendlyName}: ${e.message}`));
+    try {
+      this.onDeviceMount();
+    } catch (e) {
+      this.log.error(`Error mounting device ${this.friendlyName}: ${e.message}`);
+    }
   }
 
   handleAccessoryIdentify() {}
@@ -110,12 +110,13 @@ export abstract class ZigBeeAccessory {
 
   public abstract getAvailableServices(): Service[];
 
-  public async onDeviceMount() {
+  public onDeviceMount() {
     this.log.info(`Mounting device ${this.friendlyName}...`);
     if (
       isDeviceRouter(this.zigBeeDeviceDescriptor) &&
       this.platform.config.disableRoutingPolling !== true
     ) {
+      this.isOnline = false; // wait until we can ping the device
       this.log.info(`Device ${this.friendlyName} is a router, install ping`);
       this.interval = this.getPollingInterval();
       this.ping();
