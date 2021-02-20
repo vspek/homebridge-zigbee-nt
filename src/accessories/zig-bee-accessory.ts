@@ -1,4 +1,5 @@
 import { Logger, PlatformAccessory, Service } from 'homebridge';
+import { isNull, isUndefined } from 'lodash';
 import { ZigbeeNTHomebridgePlatform } from '../platform';
 import { ZigBeeClient } from '../zigbee/zig-bee-client';
 import { Device } from 'zigbee-herdsman/dist/controller/model';
@@ -31,6 +32,10 @@ export type ZigBeeAccessoryFactory = (
 const MAX_PING_ATTEMPTS = 1;
 
 const MAX_NAME_LENGTH = 64;
+
+function isValidValue(v: any) {
+  return !isNull(v) && !isUndefined(v);
+}
 
 export abstract class ZigBeeAccessory {
   public readonly ieeeAddr: string;
@@ -254,11 +259,13 @@ export abstract class ZigBeeAccessory {
 
       switch (service.UUID) {
         case Service.BatteryService.UUID:
-          service.updateCharacteristic(Characteristic.BatteryLevel, state.battery || 0);
-          service.updateCharacteristic(
-            Characteristic.StatusLowBattery,
-            state.battery && state.battery < 10
-          );
+          if (isValidValue(state.battery)) {
+            service.updateCharacteristic(Characteristic.BatteryLevel, state.battery || 0);
+            service.updateCharacteristic(
+              Characteristic.StatusLowBattery,
+              state.battery && state.battery < 10
+            );
+          }
           break;
         case Service.ContactSensor.UUID:
           service.updateCharacteristic(
@@ -293,13 +300,13 @@ export abstract class ZigBeeAccessory {
           break;
         case Service.Lightbulb.UUID:
           service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
-          if (this.supports('brightness')) {
+          if (this.supports('brightness') && isValidValue(state.brightness_percent)) {
             service.updateCharacteristic(
               this.platform.Characteristic.Brightness,
               state.brightness_percent
             );
           }
-          if (this.supports('color_temp')) {
+          if (this.supports('color_temp') && isValidValue(state.color_temp)) {
             service.updateCharacteristic(
               this.platform.Characteristic.ColorTemperature,
               state.color_temp
