@@ -217,8 +217,8 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
             const s = this.service.getCharacteristic(Characteristic.Saturation).value as number;
             const v = this.service.getCharacteristic(Characteristic.Brightness).value as number;
             const hsbType = new HSBType(h, s, v);
-            const [x, y] = hsbType.toXY();
-            await this.client.setColorXY(this.device, x, y);
+            const [r, g, b] = hsbType.toRGB();
+            await this.client.setColorRGB(this.device, r, g, b);
             return callback();
           } else {
             return callback(new Error('Device is offline'));
@@ -249,8 +249,8 @@ export class LighbulbServiceBuilder extends ServiceBuilder {
               const v = this.service.getCharacteristic(Characteristic.Brightness).value as number;
               const hue = this.service.getCharacteristic(Characteristic.Hue).value as number;
               const hsbType = new HSBType(hue, saturation, v);
-              const [x, y] = hsbType.toXY();
-              await this.client.setColorXY(this.device, x, y);
+              const [r, g, b] = hsbType.toRGB();
+              await this.client.setColorRGB(this.device, r, g, b);
               return callback();
             } else {
               return callback(new Error('Device is offline'));

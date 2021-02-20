@@ -240,7 +240,8 @@ export abstract class ZigBeeAccessory {
     const Characteristic = this.platform.Characteristic;
     this.mappedServices.forEach(service => {
       this.log.debug(
-        `Updating service ${service.name} (UUID: ${service.UUID}) for device ${this.friendlyName}`
+        `Updating service ${service.UUID} for device ${this.friendlyName} with state`,
+        state
       );
       if (this.supports('battery_low')) {
         service.updateCharacteristic(
@@ -299,10 +300,14 @@ export abstract class ZigBeeAccessory {
           }
           break;
         case Service.Switch.UUID:
-          service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          if (isValidValue(state.state)) {
+            service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          }
           break;
         case Service.Lightbulb.UUID:
-          service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          if (isValidValue(state.state)) {
+            service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          }
           if (this.supports('brightness')) {
             if (isValidValue(state.brightness_percent)) {
               service.updateCharacteristic(
@@ -366,7 +371,9 @@ export abstract class ZigBeeAccessory {
           );
           break;
         case Service.Outlet.UUID:
-          service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          if (isValidValue(state.state)) {
+            service.updateCharacteristic(this.platform.Characteristic.On, state.state === 'ON');
+          }
           if (this.supports('power') || this.supports('voltage') || this.supports('energy')) {
             service.updateCharacteristic(
               this.platform.Characteristic.InUse,
