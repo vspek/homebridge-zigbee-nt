@@ -254,10 +254,6 @@ export class ZigbeeNTHomebridgePlatform implements DynamicPlatformPlugin {
     return this.homekitAccessories.get(this.generateUUID(ieeeAddr));
   }
 
-  private homekitAccessoryExists(ieeeAddr: string): boolean {
-    return this.homekitAccessories.has(this.generateUUID(ieeeAddr));
-  }
-
   private async initDevice(device: Device): Promise<string> {
     const model = parseModelName(device.modelID);
     const manufacturer = device.manufacturerName;
@@ -398,23 +394,16 @@ export class ZigbeeNTHomebridgePlatform implements DynamicPlatformPlugin {
       `Zigbee message from ${this.getDeviceFriendlyName(message.device.ieeeAddr)}`,
       message
     );
-    if (message.type === 'readResponse') {
-      // only process messages that we wait for
-      this.client.processQueue(message);
-    } else {
-      if (this.homekitAccessoryExists(message.device.ieeeAddr)) {
-        this.client.decodeMessage(
-          message,
-          this.client.resolveEntity(message.device),
-          (ieeeAddr: string, state: DeviceState) => {
-            const zigBeeAccessory = this.getHomekitAccessoryByIeeeAddr(ieeeAddr);
-            this.log.debug(`Decoded state from incoming message`, state);
-            zigBeeAccessory.internalUpdate(state);
-          }
-        ); // if the message is decoded, it will call the statePublisher function
-      } else {
-        this.log.warn(`No device found from message`, message);
-      }
+    const zigBeeAccessory = this.getHomekitAccessoryByIeeeAddr(message.device.ieeeAddr);
+    if (zigBeeAccessory) {
+      this.client.decodeMessage(
+        message,
+        this.client.resolveEntity(message.device),
+        (ieeeAddr: string, state: DeviceState) => {
+          this.log.debug(`Decoded state from incoming message`, state);
+          zigBeeAccessory.internalUpdate(state);
+        }
+      ); // if the message is decoded, it will call the statePublisher function
     }
   }
 
