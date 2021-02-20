@@ -29,17 +29,27 @@ function createLightBulbService(
     client,
     zigBeeDeviceDescriptor
   ).withOnOff();
+  if (serviceConfig.meta?.colorXY) {
+    platform.log.debug(
+      `Light bulb ${platform.getDeviceFriendlyName(
+        zigBeeDeviceDescriptor.ieeeAddr
+      )} supports ColorXY`
+    );
+    return builder.withColorXY().build();
+  }
+  if (serviceConfig.meta?.colorHS) {
+    platform.log.debug(
+      `Light bulb ${platform.getDeviceFriendlyName(
+        zigBeeDeviceDescriptor.ieeeAddr
+      )} supports ColorHS`
+    );
+    return builder.withColorHS().build();
+  }
   if (serviceConfig.meta?.brightness) {
     builder.withBrightness();
   }
   if (serviceConfig.meta?.colorTemp) {
     builder.withColorTemperature();
-  }
-  if (serviceConfig.meta?.colorXY) {
-    builder.withColorXY();
-  }
-  if (serviceConfig.meta?.colorHS) {
-    builder.withColorHS();
   }
   return builder.build();
 }
@@ -253,7 +263,7 @@ function createLockService(
  * Generic device accessory builder
  */
 export class ConfigurableAccessory extends ZigBeeAccessory {
-  private readonly accessoryConfig: ServiceConfig[];
+  public readonly accessoryConfig: ServiceConfig[];
 
   constructor(
     platform: ZigbeeNTHomebridgePlatform,
