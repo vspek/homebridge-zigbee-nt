@@ -312,12 +312,26 @@ export abstract class ZigBeeAccessory {
               state.color_temp
             );
           }
+          if (this.supports('color') && isValidValue(state.color?.hue)) {
+            service.updateCharacteristic(this.platform.Characteristic.Hue, state.color.hue);
+          }
+          if (this.supports('color') && isValidValue(state.color?.s)) {
+            service.updateCharacteristic(this.platform.Characteristic.Saturation, state.color.s);
+          }
           break;
         case Service.LightSensor.UUID:
-          service.updateCharacteristic(
-            Characteristic.CurrentAmbientLightLevel,
-            state.illuminance_lux
-          );
+          if (this.supports('illuminance_lux') && isValidValue(state.illuminance_lux)) {
+            service.updateCharacteristic(
+              Characteristic.CurrentAmbientLightLevel,
+              state.illuminance_lux
+            );
+          }
+          if (this.supports('illuminance') && isValidValue(state.illuminance)) {
+            service.updateCharacteristic(
+              Characteristic.CurrentAmbientLightLevel,
+              state.illuminance
+            );
+          }
           break;
         case Service.MotionSensor.UUID:
           service.updateCharacteristic(
@@ -335,16 +349,20 @@ export abstract class ZigBeeAccessory {
           }
           break;
         case Service.TemperatureSensor.UUID:
-          service.updateCharacteristic(
-            this.platform.Characteristic.CurrentTemperature,
-            state.temperature
-          );
+          if (isValidValue(state.temperature)) {
+            service.updateCharacteristic(
+              this.platform.Characteristic.CurrentTemperature,
+              state.temperature
+            );
+          }
           break;
         case Service.HumiditySensor.UUID:
-          service.updateCharacteristic(
-            this.platform.Characteristic.CurrentRelativeHumidity,
-            state.humidity
-          );
+          if (isValidValue(state.humidity)) {
+            service.updateCharacteristic(
+              this.platform.Characteristic.CurrentRelativeHumidity,
+              state.humidity
+            );
+          }
           break;
       }
     });

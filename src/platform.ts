@@ -323,15 +323,16 @@ export class ZigbeeNTHomebridgePlatform implements DynamicPlatformPlugin {
   private createHapAccessory(name: string) {
     const uuid = this.generateUUID(name);
     const existingAccessory = this.getAccessoryByUUID(uuid);
-    const accessory = existingAccessory || new this.PlatformAccessory(name, uuid);
     if (existingAccessory) {
       this.log.info(`Reuse accessory from cache with uuid ${uuid} and name ${name}`);
+      return existingAccessory;
     } else {
-      this.log.info(`Registering new accessory with uuid ${uuid} and name ${name}`);
+      const accessory = new this.PlatformAccessory(name, uuid);
+      this.log.warn(`Registering new accessory with uuid ${uuid} and name ${name}`);
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       this.accessories.set(uuid, accessory);
+      return accessory;
     }
-    return accessory;
   }
 
   private removeAccessory(ieeeAddr: string) {
